@@ -32,22 +32,27 @@ class Incidencias(object):
         self.tipo = tipo
         self.subtipo = subtipo
         self.entrada = entrada
-        # El time stamp de inicio comienza en tiempo 00:00:00
-        if inicio != None:
+        self.salida = salida
+        # El time stamp de inicio
+        if isinstance(inicio, datetime):
+            self.inicio = inicio
+        elif isinstance(inicio, str):
             idt = datetime.strptime(inicio, "%Y-%m-%d")
             self.inicio = datetime(idt.year, idt.month, idt.day, 0, 0, 0)
         else:
             self.inicio = None
-        # El time stamp de termino es en tiempo 23:59:59
-        if termino != None:
+        # El time stamp de termino
+        if isinstance(termino, datetime):
+            self.termino = termino
+        elif isinstance(termino, str):
             tdt = datetime.strptime(termino, "%Y-%m-%d")
             self.termino = datetime(tdt.year, tdt.month, tdt.day, 23, 59, 59)
         else:
             self.termino = None
-        self.salida = salida
         # Propios
         self.incidencias = None
         self.cantidad = 0
+        self.total = 0
         self.consultado = False
 
     def encabezados(self):
@@ -62,14 +67,11 @@ class Incidencias(object):
         with open(self.entrada, encoding='iso8859') as archivo:
             lector = csv.DictReader(archivo, delimiter=';')
             for renglon in lector:
+                ano = int(renglon['Año'])
                 # Saltar
-                # self.inicio
-                # self.termino
-                #if self.ano != None and renglon['Año'] != self.ano:
-                #    continue
-                if self.inicio != None and int(renglon['Año']) < self.inicio.year:
+                if self.inicio != None and ano < self.inicio.year:
                     continue
-                if self.termino != None and int(renglon['Año']) > self.termino.year:
+                if self.termino != None and ano > self.termino.year:
                     continue
                 if self.entidad != None and renglon['Entidad'] != self.entidad:
                     continue
@@ -84,18 +86,25 @@ class Incidencias(object):
                 # Acumular
                 for mes, mes_numero in self.MESES_A_NUMEROS.items():
                     if renglon[mes] != '':
+                        if self.inicio != None and ano == self.inicio.year:
+                            if mes_numero < self.inicio.month:
+                                continue
+                        if self.termino != None and ano == self.termino.year:
+                            if mes_numero > self.termino.month:
+                                continue
                         incidencia = Incidencia(
-                            ano=renglon['Año'],
+                            ano=int(renglon['Año']),
                             mes=mes_numero,
                             entidad=renglon['Entidad'],
                             municipio=renglon['Municipio'],
                             modalidad=renglon['Modalidad'],
                             tipo=renglon['Tipo de delito'],
                             subtipo=renglon['Subtipo de delito'],
-                            cantidad=renglon[mes],
+                            cantidad=int(renglon[mes]),
                             )
                         self.incidencias.append(incidencia)
                         self.cantidad += 1
+                        self.total += incidencia.cantidad
         self.consultado = True
 
     def guardar(self):
@@ -118,5 +127,8 @@ class Incidencias(object):
         table = [self.encabezados()]
         for incidencia in self.incidencias:
             table.append(incidencia.renglon_list())
-        return(tabulate(table, headers="firstrow"))
+        return("\n".join([
+            tabulate(table, headers="firstrow"),
+            "<Incidencias: {}>".format(self.total),
+            ]))
 

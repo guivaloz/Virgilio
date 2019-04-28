@@ -2,6 +2,7 @@ import click
 
 from idenm.incidencias import Incidencias as IncidenciasEstatales
 from idmnm.incidencias import Incidencias as IncidenciasMunicipales
+from idmnm.reportes import Reportes as ReportesMunicipales
 
 
 class Config(object):
@@ -74,12 +75,45 @@ def idmnm(config, entidad, municipio, modalidad, tipo, subtipo):
         termino=config.termino,
         salida=config.salida,
         )
-    click.echo(incidencias)
-    #try:
-    #    if config.salvar:
-    #        click.echo(incidencias.guardar())
-    #    else:
-    #        click.echo(incidencias)
-    #except Exception as e:
-    #    click.echo('Hola')
-    #    click.echo(e)
+    try:
+        if config.salvar:
+            click.echo(incidencias.guardar())
+        else:
+            click.echo(incidencias)
+    except Exception as e:
+        click.echo(e)
+
+
+@cli.command()
+@click.option('--entidad', default=None, type=str, help='Entidad.')
+@click.option('--municipio', default=None, type=str, help='Municipio.')
+@click.option('--modalidad', default=None, type=str, help='Modalidad.')
+@click.option('--tipo', default=None, type=str, help='Tipo.')
+@click.option('--subtipo', default=None, type=str, help='Subtipo.')
+@pass_config
+def idmnm_reportes(config, entidad, municipio, modalidad, tipo, subtipo):
+    """
+    Reportes de Incidencia Delictiva Municipal, Nueva Metodología
+    """
+    reportes = ReportesMunicipales(
+        entidad=entidad,
+        municipio=municipio,
+        modalidad=modalidad,
+        tipo=tipo,
+        subtipo=subtipo,
+        entrada=config.entrada,
+        inicio=config.inicio,
+        termino=config.termino,
+        salida=config.salida,
+        )
+    try:
+        if config.salvar:
+            click.echo(reportes.guardar())
+        else:
+            click.echo(reportes.crear_ultimo())
+            click.echo(reportes.crear_ano_pasado())
+            click.echo(reportes.crear_ano_antepasado())
+            click.echo(reportes)
+    except Exception as e:
+        click.echo(e)
+
