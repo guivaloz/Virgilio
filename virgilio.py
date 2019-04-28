@@ -1,8 +1,7 @@
 import click
-from tabulate import tabulate
 
-import idenm.incidencias as idenm
-import idmnm.incidencias as idmnm
+from idenm.incidencias import Incidencias as IncidenciasEstatales
+from idmnm.incidencias import Incidencias as IncidenciasMunicipales
 
 
 class Config(object):
@@ -10,8 +9,8 @@ class Config(object):
     def __init__(self):
         self.salvar = False
         self.entrada = ''
-        self.inicio = ''
-        self.termino = ''
+        self.inicio = None
+        self.termino = None
         self.salida = ''
 
 
@@ -43,7 +42,7 @@ def idenm(config):
     """
     Incidencia Delictiva Estatal, Nueva Metodología
     """
-    incidencias = idenm.Incidencias()
+    incidencias = idenm()
     try:
         if config.salvar:
             click.echo(incidencias.guardar())
@@ -54,17 +53,33 @@ def idenm(config):
 
 
 @cli.command()
+@click.option('--entidad', default=None, type=str, help='Entidad.')
+@click.option('--municipio', default=None, type=str, help='Municipio.')
+@click.option('--modalidad', default=None, type=str, help='Modalidad.')
+@click.option('--tipo', default=None, type=str, help='Tipo.')
+@click.option('--subtipo', default=None, type=str, help='Subtipo.')
 @pass_config
-def idmnm(config):
+def idmnm(config, entidad, municipio, modalidad, tipo, subtipo):
     """
     Incidencia Delictiva Municipal, Nueva Metodología
     """
-    incidencias = idmnm.Incidencias()
-    try:
-        if config.salvar:
-            click.echo(incidencias.guardar())
-        else:
-            click.echo(incidencias)
-    except Exception as e:
-        click.echo(e)
-
+    incidencias = IncidenciasMunicipales(
+        entidad=entidad,
+        municipio=municipio,
+        modalidad=modalidad,
+        tipo=tipo,
+        subtipo=subtipo,
+        entrada=config.entrada,
+        inicio=config.inicio,
+        termino=config.termino,
+        salida=config.salida,
+        )
+    click.echo(incidencias)
+    #try:
+    #    if config.salvar:
+    #        click.echo(incidencias.guardar())
+    #    else:
+    #        click.echo(incidencias)
+    #except Exception as e:
+    #    click.echo('Hola')
+    #    click.echo(e)
