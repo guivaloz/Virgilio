@@ -28,13 +28,33 @@ Pruebe consultando la ayuda...
 
     (Virgilio) $ virgilio --help
 
+### Secretariado Ejecutivo
+
+En la siguiente página podrá encontrar los archivos de datos abiertos...
+
+    https://www.gob.mx/sesnsp/acciones-y-programas/datos-abiertos-de-incidencia-delictiva?state=published
+
+Descargue los archivos IDEFC_NM.csv y IDM_NM.csv
+
 ### Notas sobre el archivo CSV
 
-No es un archivo con caracteres UTF-8, ni separados por comas,
-por lo que estas líneas lo arreglan a ISO 8859 y separados por punto y coma...
+Si no es un archivo con caracteres UTF-8, ni separados por comas,
+debe cambiar estas líneas...
+
+    with open(self.entrada, encoding='utf8') as archivo:
+        lector = csv.DictReader(archivo, delimiter=';')
+
+Por ejemplo, a ISO 8859...
 
     with open(self.entrada, encoding='iso8859') as archivo:
         lector = csv.DictReader(archivo, delimiter=';')
+
+### Acelere el script creando un archivo para su estado
+
+Por ejemplo, para extraer 'Coahuila de Zaragoza' a un nuevo archivo IDM_NM_05.csv, ejecute...
+
+    $ head -n1 IDM_NM.csv > IDM_NM_05.csv
+    $ grep -a 'Coahuila de Zaragoza' IDM_NM.csv >> IDM_NM_05.csv
 
 ### Ejemplos de usos
 
@@ -48,3 +68,9 @@ de julio 2017 a junio 2018...
         --tipo Robo --subtipo 'Robo a casa habitación' \
         --modalidad 'Sin violencia'
 
+Mostrar un reporte trimestral de la Región Laguna,
+de Robo a casa habitación, del presente año y los dos anteriores...
+
+    $ virgilio --entrada IDM_NM_mar19_05.csv \
+    --inicio 2019-01-01 --termino 2019-03-31 idmnm-reportes-coahuila-laguna \
+    --tipo Robo --subtipo 'Robo a casa habitación'

@@ -64,7 +64,7 @@ class Incidencias(object):
         if not os.path.isfile(self.entrada):
             raise Exception("<Error> Archivo CSV {} no encontrado.".format(self.entrada))
         self.incidencias = list()
-        with open(self.entrada, encoding='iso8859') as archivo:
+        with open(self.entrada, encoding='utf8') as archivo:
             lector = csv.DictReader(archivo, delimiter=';')
             for renglon in lector:
                 ano = int(renglon['Año'])
@@ -75,8 +75,11 @@ class Incidencias(object):
                     continue
                 if self.entidad != None and renglon['Entidad'] != self.entidad:
                     continue
-                if self.municipio != None and renglon['Municipio'] != self.municipio:
-                    continue
+                if self.municipio != None:
+                    if isinstance(self.municipio, str) and renglon['Municipio'] != self.municipio:
+                        continue
+                    if isinstance(self.municipio, list) and renglon['Municipio'] not in self.municipio:
+                        continue
                 if self.modalidad != None and renglon['Modalidad'] != self.modalidad:
                     continue
                 if self.tipo != None and renglon['Tipo de delito'] != self.tipo:
@@ -123,7 +126,6 @@ class Incidencias(object):
             self.cargar()
         if self.cantidad == 0:
             return('<Incidencias> La consulta no arrojó registros.')
-        #return('<Incidencias {}>.'.format(self.cantidad))
         table = [self.encabezados()]
         for incidencia in self.incidencias:
             table.append(incidencia.renglon_list())

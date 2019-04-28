@@ -117,3 +117,37 @@ def idmnm_reportes(config, entidad, municipio, modalidad, tipo, subtipo):
     except Exception as e:
         click.echo(e)
 
+
+@cli.command()
+@click.option('--modalidad', default=None, type=str, help='Modalidad.')
+@click.option('--tipo', default=None, type=str, help='Tipo.')
+@click.option('--subtipo', default=None, type=str, help='Subtipo.')
+@pass_config
+def idmnm_reportes_coahuila_laguna(config, modalidad, tipo, subtipo):
+    """
+    Reportes de Incidencia Delictiva Municipal, Nueva Metodología
+    """
+    entidad = 'Coahuila de Zaragoza'
+    municipios = ['Matamoros', 'San Pedro', 'Torreón', 'Viezca']
+    reportes = ReportesMunicipales(
+        entidad=entidad,
+        municipio=municipios,
+        modalidad=modalidad,
+        tipo=tipo,
+        subtipo=subtipo,
+        entrada=config.entrada,
+        inicio=config.inicio,
+        termino=config.termino,
+        salida=config.salida,
+        )
+    try:
+        if config.salvar:
+            click.echo(reportes.guardar())
+        else:
+            click.echo(reportes.crear_ultimo())
+            click.echo(reportes.crear_ano_pasado())
+            click.echo(reportes.crear_ano_antepasado())
+            click.echo(reportes)
+    except Exception as e:
+        click.echo(e)
+

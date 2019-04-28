@@ -29,10 +29,9 @@ class Reportes(object):
         else:
             self.termino = None
         self.salida = salida
-        # Propios
-        self.reportes = None
-        self.cantidad = 0
-        self.consultado = False
+        self.total_ultimo = 0
+        self.total_ano_pasado = 0
+        self.total_ano_antepasado = 0
 
     def cantidad_de_meses(self):
         return((self.termino.year - self.inicio.year) * 12 + self.termino.month - self.inicio.month + 1)
@@ -48,7 +47,7 @@ class Reportes(object):
         return(inicio, termino)
 
     def crear_ultimo(self):
-        incidencia = Incidencias(
+        incidencias = Incidencias(
             entidad=self.entidad,
             municipio=self.municipio,
             modalidad=self.modalidad,
@@ -58,11 +57,13 @@ class Reportes(object):
             inicio=self.inicio,
             termino=self.termino,
             )
-        return(incidencia)
+        incidencias.cargar()
+        self.total_ultimo += incidencias.total
+        return(incidencias)
 
     def crear_ano_pasado(self):
         inicio, termino = self.rango_de_fechas_ano_pasado()
-        incidencia = Incidencias(
+        incidencias = Incidencias(
             entidad=self.entidad,
             municipio=self.municipio,
             modalidad=self.modalidad,
@@ -72,11 +73,13 @@ class Reportes(object):
             inicio=inicio,
             termino=termino,
             )
-        return(incidencia)
+        incidencias.cargar()
+        self.total_ano_pasado += incidencias.total
+        return(incidencias)
 
     def crear_ano_antepasado(self):
         inicio, termino = self.rango_de_fechas_ano_antepasado()
-        incidencia = Incidencias(
+        incidencias = Incidencias(
             entidad=self.entidad,
             municipio=self.municipio,
             modalidad=self.modalidad,
@@ -86,7 +89,9 @@ class Reportes(object):
             inicio=inicio,
             termino=termino,
             )
-        return(incidencia)
+        incidencias.cargar()
+        self.total_ano_antepasado += incidencias.total
+        return(incidencias)
 
     def __repr__(self):
         if self.cantidad_de_meses() > 6:
@@ -96,7 +101,7 @@ class Reportes(object):
         return("\n".join([
             '<Reportes>',
             "- Meses de diferencia: {}".format(self.cantidad_de_meses()),
-            "- De {} a {}".format(self.inicio.isoformat(), self.termino.isoformat()),
-            "- De {} a {}".format(ano_pasado_inicio.isoformat(), ano_pasado_termino.isoformat()),
-            "- De {} a {}".format(ano_antepasado_inicio.isoformat(), ano_antepasado_termino.isoformat()),
+            "- De {} a {} son {}".format(self.inicio.isoformat(), self.termino.isoformat(), self.total_ultimo),
+            "- De {} a {} son {}".format(ano_pasado_inicio.isoformat(), ano_pasado_termino.isoformat(), self.total_ano_pasado),
+            "- De {} a {} son {}".format(ano_antepasado_inicio.isoformat(), ano_antepasado_termino.isoformat(), self.total_ano_antepasado),
             ]))
