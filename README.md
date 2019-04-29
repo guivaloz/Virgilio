@@ -24,9 +24,12 @@ Instale...
     (Virgilio) $ pip install -r requirements.txt
     (Virgilio) $ pip install --editable .
 
-Pruebe consultando la ayuda...
+Consulte la ayuda...
 
     (Virgilio) $ virgilio --help
+    (Virgilio) $ virgilio idmnm --help
+    (Virgilio) $ virgilio idmnm-reportes --help
+    (Virgilio) $ virgilio idmnm-reportes-coahuila --help
 
 ### Secretariado Ejecutivo
 
@@ -34,7 +37,7 @@ En la siguiente página podrá encontrar los archivos de datos abiertos...
 
     https://www.gob.mx/sesnsp/acciones-y-programas/datos-abiertos-de-incidencia-delictiva?state=published
 
-Descargue los archivos IDEFC_NM.csv y IDM_NM.csv
+Descargue los archivos IDEFC_NM (estatal) y IDM_NM (municipal).
 
 ### Notas sobre el archivo CSV
 
@@ -72,5 +75,5 @@ Mostrar un reporte trimestral de la Región Laguna,
 de Robo a casa habitación, del presente año y los dos anteriores...
 
     $ virgilio --entrada IDM_NM_mar19_05.csv \
-    --inicio 2019-01-01 --termino 2019-03-31 idmnm-reportes-coahuila-laguna \
-    --tipo Robo --subtipo 'Robo a casa habitación'
+        --inicio 2019-01-01 --termino 2019-03-31 idmnm-reportes-coahuila-laguna \
+        --tipo Robo --subtipo 'Robo a casa habitación'

@@ -93,7 +93,7 @@ def idmnm(config, entidad, municipio, modalidad, tipo, subtipo):
 @pass_config
 def idmnm_reportes(config, entidad, municipio, modalidad, tipo, subtipo):
     """
-    Reportes de Incidencia Delictiva Municipal, Nueva Metodología
+    Reportes de IDM_NM
     """
     reportes = ReportesMunicipales(
         entidad=entidad,
@@ -110,25 +110,38 @@ def idmnm_reportes(config, entidad, municipio, modalidad, tipo, subtipo):
         if config.salvar:
             click.echo(reportes.guardar())
         else:
-            click.echo(reportes.crear_ultimo())
-            click.echo(reportes.crear_ano_pasado())
             click.echo(reportes.crear_ano_antepasado())
+            click.echo(reportes.crear_ano_pasado())
+            click.echo(reportes.crear_ultimo())
             click.echo(reportes)
     except Exception as e:
         click.echo(e)
 
 
 @cli.command()
+@click.option('--region', default=None, type=str, help='Carbonífera, Centro, Laguna, Norte o Sureste')
 @click.option('--modalidad', default=None, type=str, help='Modalidad.')
 @click.option('--tipo', default=None, type=str, help='Tipo.')
 @click.option('--subtipo', default=None, type=str, help='Subtipo.')
 @pass_config
-def idmnm_reportes_coahuila_laguna(config, modalidad, tipo, subtipo):
+def idmnm_reportes_coahuila(config, region, modalidad, tipo, subtipo):
     """
-    Reportes de Incidencia Delictiva Municipal, Nueva Metodología
+    Reportes de IDM_NM para regiones de Coahuila de Zaragoza
     """
     entidad = 'Coahuila de Zaragoza'
-    municipios = ['Matamoros', 'San Pedro', 'Torreón', 'Viezca']
+    if region == 'Carbonífera':
+        municipios = ['Juárez', 'Múzquiz', 'Progreso', 'Sabinas', 'San Juan de Sabinas']
+    elif region == 'Centro':
+        municipios = ['Abasolo', 'Candela', 'Castaños', 'Cuatro Ciénegas', 'Escobedo', 'Frontera', 'Lamadrid', 'Monclova', 'Nadadores', 'Ocampo', 'Sacramento', 'San Buenaventura', 'Sierra Mojada']
+    elif region == 'Laguna':
+        municipios = ['Francisco I. Madero', 'Matamoros', 'San Pedro', 'Torreón', 'Viesca']
+    elif region == 'Norte':
+        municipios = ['Acuña', 'Allende', 'Guerrero', 'Hidalgo', 'Jiménez', 'Morelos', 'Nava', 'Piedras Negras', 'Villa Unión', 'Zaragoza']
+    elif region == 'Sureste':
+        municipios = ['Arteaga', 'General Cepeda', 'Parras', 'Ramos Arizpe', 'Saltillo']
+    else:
+        click.echo('No es una región válida de Coahuila de Zaragoza.')
+        return()
     reportes = ReportesMunicipales(
         entidad=entidad,
         municipio=municipios,
@@ -144,9 +157,9 @@ def idmnm_reportes_coahuila_laguna(config, modalidad, tipo, subtipo):
         if config.salvar:
             click.echo(reportes.guardar())
         else:
-            click.echo(reportes.crear_ultimo())
-            click.echo(reportes.crear_ano_pasado())
             click.echo(reportes.crear_ano_antepasado())
+            click.echo(reportes.crear_ano_pasado())
+            click.echo(reportes.crear_ultimo())
             click.echo(reportes)
     except Exception as e:
         click.echo(e)

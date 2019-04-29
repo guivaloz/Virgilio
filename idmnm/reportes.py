@@ -101,7 +101,7 @@ class Reportes(object):
         return("\n".join([
             '<Reportes>',
             "- Meses de diferencia: {}".format(self.cantidad_de_meses()),
-            "- De {} a {} son {}".format(self.inicio.isoformat(), self.termino.isoformat(), self.total_ultimo),
-            "- De {} a {} son {}".format(ano_pasado_inicio.isoformat(), ano_pasado_termino.isoformat(), self.total_ano_pasado),
             "- De {} a {} son {}".format(ano_antepasado_inicio.isoformat(), ano_antepasado_termino.isoformat(), self.total_ano_antepasado),
+            "- De {} a {} son {}".format(ano_pasado_inicio.isoformat(), ano_pasado_termino.isoformat(), self.total_ano_pasado),
+            "- De {} a {} son {}".format(self.inicio.isoformat(), self.termino.isoformat(), self.total_ultimo),
             ]))
